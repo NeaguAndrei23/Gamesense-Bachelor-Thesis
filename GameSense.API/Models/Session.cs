@@ -11,7 +11,7 @@
         public double DurationSeconds { get; set; } //how long the session lasted
         public int Deaths { get; set; } //no of deaths
         public int Attempts { get; set; } //no of attempts
-        public bool IsCompleted { get; set; } //if the level was completed or not
+        public bool IsCompleted { get; set; } = false; //if the level was completed or not
 
        public ICollection<DeathEvent> DeathEvents { get; set; } = new List<DeathEvent>(); //list of all deaths recorder PER session
     }
