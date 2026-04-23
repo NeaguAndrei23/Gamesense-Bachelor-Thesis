@@ -1,34 +1,24 @@
+using GameSense.API.Data;
+using Microsoft.EntityFrameworkCore;
+
+// Create a builder object for initialization, passing along arguments given when the app started
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Register controllers so ASP.NET can route HTTP requests to them
+builder.Services.AddControllers();
 
+// Register the database context using dependency injection, connecting to the SQLite file
+builder.Services.AddDbContext<GameSenseDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Build the application
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
+// Redirect HTTP reqs to HTTPS
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Map incoming reqs to the correct controller methods based on URL
+app.MapControllers();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-});
-
+// Start the application and listen for incoming requests
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
