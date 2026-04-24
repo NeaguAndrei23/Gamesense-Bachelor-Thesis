@@ -17,8 +17,8 @@ var app = builder.Build();
 // Redirect HTTP reqs to HTTPS
 app.UseHttpsRedirection();
 
-// Map incoming reqs to the correct controller methods based on URL
-app.MapControllers();
+// Map incoming reqs to the correct controller methods based on URL, searching for the [ApiController] marked files
+app.MapControllers(); 
 
 // Start the application and listen for incoming requests
 app.Run();
