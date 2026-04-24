@@ -14,6 +14,8 @@ namespace GameSense.API.Controllers
         {
             _context = gameSenseDbContext;
         }
+
+        // GET api/sessions — retrieve all sessions
         [HttpGet]
         public IActionResult GetAll()
         {
@@ -21,6 +23,8 @@ namespace GameSense.API.Controllers
             return Ok(sessions);
 
         }
+
+        // GET api/sessions/{id} — retrieve a single session by its primary key
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -33,6 +37,7 @@ namespace GameSense.API.Controllers
             
         }
 
+        // GET api/sessions/level/{levelId} — retrieve all sessions for a specific level, used for ML aggregation
         [HttpGet("level/{levelId}")]
         public IActionResult Get(string levelId)
         {
@@ -44,6 +49,7 @@ namespace GameSense.API.Controllers
             return Ok(sessions);
         }
 
+        // POST api/sessions — create a new session, called by Unity after each playtesting run
         [HttpPost]
         public IActionResult Create([FromBody] Session session)
         {
@@ -53,6 +59,7 @@ namespace GameSense.API.Controllers
             return CreatedAtAction(nameof(GetAll), new { id = session.Id }, session);
         }
 
+        // DELETE api/sessions/{id} — remove a session, used by designer to clean corrupted or invalid data
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
