@@ -2,6 +2,7 @@
 {
     //a single run through of the level, ending once the player either completes the level or quits. Session data will be
     //aggregated using levelId
+
     public class Session
     {
         public int Id { get; set; } //primary key (automatically in EF Core), identifier of the session
@@ -13,6 +14,7 @@
         public int Attempts { get; set; } //no of attempts
         public bool IsCompleted { get; set; } = false; //if the level was completed or not
 
-       public ICollection<DeathEvent> DeathEvents { get; set; } = new List<DeathEvent>(); //list of all deaths recorder PER session
+        
+        public ICollection<DeathEvent> DeathEvents { get; set; } = new List<DeathEvent>(); //list of all deaths recorder PER session
     }
 }
