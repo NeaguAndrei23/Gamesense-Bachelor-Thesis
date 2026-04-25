@@ -30,17 +30,17 @@ namespace GameSense.API.Controllers
         public IActionResult GetZoneStats(string levelId)
         {
             var sessionIds = _context.Sessions
-                .Where(s => s.LevelId == levelId)
-                .Select(s => s.Id)
-                .ToList();
+                .Where(s => s.LevelId == levelId)       // filter sessions by level
+                .Select(s => s.Id)                      // from those sessions, take only the Id
+                .ToList();                              // execute and store as a list of integers
 
             if (!sessionIds.Any())
                 return NotFound();
 
             var zoneStats = _context.DeathEvents
-                .Where(d => sessionIds.Contains(d.SessionId))
-                .GroupBy(d => d.ZoneId)
-                .Select(g => new { zone = g.Key, deathCount = g.Count() })
+                .Where(d => sessionIds.Contains(d.SessionId))               // only deaths from level's sessions
+                .GroupBy(d => d.ZoneId)                                     // group deaths together by zone name
+                .Select(g => new { zone = g.Key, deathCount = g.Count() })  // for each group, take the zone name and count deaths
                 .ToList();
 
             return Ok(zoneStats);
