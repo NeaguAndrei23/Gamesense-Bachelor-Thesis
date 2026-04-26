@@ -14,7 +14,6 @@
         public int Attempts { get; set; } //no of attempts
         public bool IsCompleted { get; set; } = false; //if the level was completed or not
 
-        
         public ICollection<DeathEvent> DeathEvents { get; set; } = new List<DeathEvent>(); //list of all deaths recorder PER session
     }
 }

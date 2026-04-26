@@ -1,0 +1,37 @@
+﻿@model List<GameSense.Web.Models.SessionViewModel>
+@{
+    ViewData["Title"] = "Sessions";
+    int i = 1;
+}
+
+<h2>Playtesting Sessions</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Player</th>
+            <th>Level</th>
+            <th>Start Date & Time</th>
+            <th>Duration (s)</th>
+            <th>Deaths</th>
+            <th>Attempts</th>
+            <th>Completed</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var session in Model)
+        {
+                <tr>
+                    <td>@i</td>
+                    <td>@session.PlayerId</td>
+                    <td>@session.LevelId</td>
+                    <td>@session.StartTime.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@session.DurationSeconds</td>
+                    <td>@session.Deaths</td>
+                    <td>@session.Attempts</td>
+                    <td>@(session.IsCompleted ? "Yes" : "No")</td>
+                </tr>
+            i++;
+        }
+    </tbody>
+</table>
