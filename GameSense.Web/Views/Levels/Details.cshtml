@@ -28,3 +28,35 @@
 		}
 	</tbody>
 </table>
+<canvas id="zoneChart" width="400" height="200"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+	const ctx = document.getElementById('zoneChart').getContext('2d');
+	const chart = new Chart(ctx, {
+		type: 'bar',
+		data: {
+			labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+						((List<GameSense.Web.Models.ZoneStatViewModel>)ViewBag.ZoneStats).Select(z => z.Zone)
+					)),
+			datasets: [{
+				label: 'Deaths per Zone',
+				data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+					((List<GameSense.Web.Models.ZoneStatViewModel>)ViewBag.ZoneStats).Select(z => z.DeathCount)
+				)),
+				backgroundColor: 'rgba(255, 99, 132, 0.5)'
+			}]
+		},
+		options: {
+			scales: {
+				y: {
+					ticks: {
+						stepSize: 1,
+						precision: 0
+					},
+					beginAtZero: true
+				}
+			}
+		}		
+	});
+</script>
