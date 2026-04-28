@@ -24,7 +24,11 @@
                 <tr>
                     <td>@i</td>
                     <td>@session.PlayerId</td>
-                    <td>@session.LevelId</td>
+                    <td>
+                        <a asp-controller="Levels" asp-action="Details" asp-route-levelId="@session.LevelId">
+                        @session.LevelId
+                        </a>
+                    </td>
                     <td>@session.StartTime.ToString("yyyy-MM-dd HH:mm")</td>
                     <td>@session.DurationSeconds</td>
                     <td>@session.Deaths</td>

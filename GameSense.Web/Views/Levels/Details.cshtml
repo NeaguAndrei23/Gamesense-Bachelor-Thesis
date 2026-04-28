@@ -1,0 +1,30 @@
+﻿@model List<GameSense.Web.Models.SessionViewModel>
+@{
+	ViewData["Title"] = "Zone Statistics";
+}
+
+<h2>@ViewBag.LevelId - level details</h2>
+<div>
+	<p>Total Sessions: @Model.Count</p>
+	<p>Average Deaths: @(Model.Average(s => s.Deaths).ToString("F1"))</p>
+	<p>Average Duration: @(Model.Average(s => s.DurationSeconds).ToString("F1"))s</p>
+	<p>Completion Rate: @(Model.Count == 0 ? 0 : Model.Count(s => s.IsCompleted) * 100 / Model.Count)%</p>
+</div>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Zone</th>
+			<th>Deaths</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var zone in (List<GameSense.Web.Models.ZoneStatViewModel>)ViewBag.ZoneStats)
+		{
+			<tr>
+				<td>@zone.Zone</td>
+				<td>@zone.DeathCount</td>
+			</tr>
+		}
+	</tbody>
+</table>
