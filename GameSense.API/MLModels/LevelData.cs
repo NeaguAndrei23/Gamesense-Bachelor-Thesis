@@ -18,5 +18,8 @@ namespace GameSense.API.MLModels
         [LoadColumn(4)]
         public string Label { get; set; } = string.Empty; //difficulty label: easy, medium, hard, unfair
 
+        [NoColumn]
+        public string LevelId { get; set; } = string.Empty;
+
     }
 }

@@ -83,6 +83,7 @@ namespace GameSense.API.Services
 
                 var levelData = new LevelData
                 {
+                    LevelId = levelId,
                     AverageDeaths = avgDeaths,
                     AverageDuration = avgDuration,
                     CompletionRate = completionRate,

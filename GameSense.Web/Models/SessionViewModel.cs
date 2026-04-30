@@ -3,8 +3,8 @@
     public class SessionViewModel
     {
         public int Id { get; set; } //primary key (automatically in EF Core), identifier of the session
-        public string PlayerId { get; set; } //identifies who played the level
-        public string LevelId { get; set; } //identifies the level played
+        public string PlayerId { get; set; } = string.Empty;//identifies who played the level
+        public string LevelId { get; set; } = string.Empty; //identifies the level played
         public DateTime StartTime { get; set; } //when the session was started
         public double DurationSeconds { get; set; } //how long the session lasted
         public int Deaths { get; set; } //no of deaths
