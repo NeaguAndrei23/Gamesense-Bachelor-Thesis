@@ -1,4 +1,5 @@
 using GameSense.API.Data;
+using GameSense.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 // Create a builder object for initialization, passing along arguments given when the app started
@@ -13,7 +14,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 // Register the database context using dependency injection, connecting to the SQLite file
 builder.Services.AddDbContext<GameSenseDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+// Register the created service per HTTP request, similar to the db
+builder.Services.AddScoped<DifficultyService>();
 // Build the application
 var app = builder.Build();
 
