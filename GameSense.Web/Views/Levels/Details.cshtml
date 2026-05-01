@@ -5,7 +5,33 @@
 
 @* page heading showing which level is being analyzed *@
 <h2>@ViewBag.LevelId - level details</h2>
-
+@* difficulty prediction from ML model *@
+@if (ViewBag.DifficultyResponse != null)
+{
+    <div>
+        @{
+            var difficulty = ViewBag.DifficultyResponse as GameSense.Web.Models.DifficultyPredictionViewModel;
+        }
+        @if (difficulty != null)
+        {
+            <div>
+                <strong>Predicted Difficulty: </strong> @difficulty.PredictedDifficulty
+            </div>
+        }
+        else
+        {
+            <div>
+                <strong>Predicted Difficulty: </strong> Unavailable (add more session data)
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div>
+        <strong>Predicted Difficulty: </strong> Unavailable (add more session data)
+    </div>
+}
 @* aggregated statistics calculated from all sessions for this level *@
 <div>
     <p>Total Sessions: @Model.Count</p>

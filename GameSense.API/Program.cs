@@ -15,7 +15,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddDbContext<GameSenseDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 // Register the created service per HTTP request, similar to the db
-builder.Services.AddScoped<DifficultyService>();
+builder.Services.AddSingleton<DifficultyService>();
 // Build the application
 var app = builder.Build();
 

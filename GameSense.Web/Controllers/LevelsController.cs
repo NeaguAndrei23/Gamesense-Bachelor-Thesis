@@ -29,7 +29,14 @@ namespace GameSense.Web.Controllers
 
             ViewBag.ZoneStats = zoneStats;
             ViewBag.LevelId = levelId;
+            // fetch difficulty prediction — not critical, show "Unavailable" if it fails
+            var difficultyResponse = await client.GetAsync($"api/difficulty/{levelId}");
+            ViewBag.DifficultyResponse = difficultyResponse.IsSuccessStatusCode
+                ? await difficultyResponse.Content.ReadFromJsonAsync<DifficultyPredictionViewModel>()
+                : null;
             return View(sessions);
         }
+
+
     }
 }

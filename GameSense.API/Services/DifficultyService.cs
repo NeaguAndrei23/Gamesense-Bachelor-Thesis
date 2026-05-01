@@ -7,12 +7,11 @@ namespace GameSense.API.Services
     public class DifficultyService
     {
         private readonly MLContext _mlContext;
-        private readonly GameSenseDbContext _context;
-        public DifficultyService(GameSenseDbContext gameSenseDbContext)
+        private ITransformer? _cachedModel;
+        public DifficultyService()
         {
             _mlContext = new MLContext(42); //seed given for repeatability
-            _context = gameSenseDbContext; //database access
-            
+
         }
         // Trains a multiclass classification model using SDCA linear classifier(Stochastic Dual Coordinate Ascent).
 
@@ -55,16 +54,16 @@ namespace GameSense.API.Services
             return predictionEngine.Predict(levelData); //different Predict() method
         }
 
-        public List<LevelData> GenerateTrainingData()
+        public List<LevelData> GenerateTrainingData(GameSenseDbContext context)
         {
-            var levelIds = _context.Sessions.Select(s => s.LevelId)
+            var levelIds = context.Sessions.Select(s => s.LevelId)
                 .Distinct()
                 .ToList();
             var result = new List<LevelData>();
 
             foreach (var levelId in levelIds)
             {
-                var sessions = _context.Sessions.Where(s => s.LevelId == levelId).ToList();
+                var sessions = context.Sessions.Where(s => s.LevelId == levelId).ToList();
                 var avgDeaths = (float)sessions.Average(s => s.Deaths);
                 var avgDuration = (float)sessions.Average(s => s.DurationSeconds);
                 var completionRate = (float)sessions.Count(s => s.IsCompleted)/sessions.Count() * 100;
@@ -94,5 +93,17 @@ namespace GameSense.API.Services
             }
             return result;
         }
+        // returns cached model if available, otherwise trains and caches a new one
+        // training only happens once per API lifetime, subsequent calls should return quickly
+        public ITransformer GetOrTrainModel(GameSenseDbContext context)
+        {
+            if(_cachedModel == null)
+            {
+                var trainingData = GenerateTrainingData(context);
+                _cachedModel = TrainModel(trainingData);
+            }
+            return _cachedModel;
+        }
+
     }
 }
