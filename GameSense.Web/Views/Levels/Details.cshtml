@@ -1,93 +1,142 @@
 ﻿@model List<GameSense.Web.Models.SessionViewModel>
 @{
-    ViewData["Title"] = "Zone Statistics";
+    ViewData["Title"] = "Level Details";
+    var difficulty = ViewBag.DifficultyResponse as GameSense.Web.Models.DifficultyPredictionViewModel;
+    var difficultyLabel = difficulty?.PredictedDifficulty ?? "Unavailable";
+    var badgeColor = difficultyLabel switch
+    {
+        "Easy" => "success",
+        "Medium" => "warning",
+        "Hard" => "danger",
+        "Unfair" => "dark",
+        _ => "secondary"
+    };
 }
 
-@* page heading showing which level is being analyzed *@
-<h2>@ViewBag.LevelId - level details</h2>
-@* difficulty prediction from ML model *@
-@if (ViewBag.DifficultyResponse != null)
-{
-    <div>
-        @{
-            var difficulty = ViewBag.DifficultyResponse as GameSense.Web.Models.DifficultyPredictionViewModel;
-        }
-        @if (difficulty != null)
-        {
-            <div>
-                <strong>Predicted Difficulty: </strong> @difficulty.PredictedDifficulty
-            </div>
-        }
-        else
-        {
-            <div>
-                <strong>Predicted Difficulty: </strong> Unavailable (add more session data)
-            </div>
-        }
+@* navbar *@
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+    <div class="container-fluid px-4">
+        <span class="navbar-brand fw-bold text-primary fs-4">GameSense</span>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="/Sessions"> Back to the Sessions list</a>
+        </div>
     </div>
-}
-else
-{
-    <div>
-        <strong>Predicted Difficulty: </strong> Unavailable (add more session data)
+</nav>
+
+<div class="container-fluid px-4 py-4">
+
+    @* page header *@
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <h1 class="h2 fw-bold mb-0">@ViewBag.LevelId</h1>
+        <span class="badge bg-@badgeColor fs-6">@difficultyLabel</span>
     </div>
-}
-@* aggregated statistics calculated from all sessions for this level *@
-<div>
-    <p>Total Sessions: @Model.Count</p>
-    <p>Average Deaths: @(Model.Average(s => s.Deaths).ToString("F1"))</p>
-    <p>Average Duration: @(Model.Average(s => s.DurationSeconds).ToString("F1"))s</p>
-    @* completion rate: sessions completed / total sessions, guarded against division by zero *@
-    <p>Completion Rate: @(Model.Count == 0 ? 0 : Model.Count(s => s.IsCompleted) * 100 / Model.Count)%</p>
+
+    @* stat cards *@
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted small text-uppercase fw-semibold mb-1">Total Sessions</p>
+                    <p class="fs-3 fw-bold mb-0">@Model.Count</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted small text-uppercase fw-semibold mb-1">Average Deaths</p>
+                    <p class="fs-3 fw-bold mb-0">@(Model.Average(s => s.Deaths).ToString("F1"))</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted small text-uppercase fw-semibold mb-1">Average Duration</p>
+                    <p class="fs-3 fw-bold mb-0">@(Model.Average(s => s.DurationSeconds).ToString("F1"))s</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <p class="text-muted small text-uppercase fw-semibold mb-1">Completion Rate</p>
+                    <p class="fs-3 fw-bold mb-0 text-primary">
+                        @(Model.Count == 0 ? 0 : Model.Count(s => s.IsCompleted) * 100 / Model.Count)%
+                    </p>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar" style="width: @(Model.Count == 0 ? 0 : Model.Count(s => s.IsCompleted) * 100 / Model.Count)%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* zone table and chart *@
+    <div class="row g-3">
+        <div class="col-12 col-lg-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white fw-semibold">Zone Fatalities</div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Zone Name</th>
+                                <th class="text-end">Death Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var zone in (List<GameSense.Web.Models.ZoneStatViewModel>)ViewBag.ZoneStats)
+                            {
+                                    <tr>
+                                        <td>@zone.Zone</td>
+                                        <td class="text-end fw-bold">@zone.DeathCount</td>
+                                    </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-7">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white fw-semibold">Deaths per Zone</div>
+                <div class="card-body">
+                    <canvas id="zoneChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-@* zone death count table — shows how many deaths occurred in each designer-defined zone *@
-<table class="table">
-    <thead>
-        <tr>
-            <th>Zone</th>
-            <th>Deaths</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var zone in (List<GameSense.Web.Models.ZoneStatViewModel>)ViewBag.ZoneStats)
-        {
-                <tr>
-                    <td>@zone.Zone</td>
-                    <td>@zone.DeathCount</td>
-                </tr>
-        }
-    </tbody>
-</table>
-
-@* bar chart visualizing deaths per zone using Chart.js *@
-<canvas id="zoneChart" width="400" height="200"></canvas>
+@* chart.js *@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('zoneChart').getContext('2d');
     const chart = new Chart(ctx, {
         type: 'bar',
         data: {
-            // zone names as x-axis labels, serialized from server-side Razor data
             labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
          ((List<GameSense.Web.Models.ZoneStatViewModel>)ViewBag.ZoneStats).Select(z => z.Zone)
             )),
             datasets: [{
                 label: 'Deaths per Zone',
-                // death counts as y-axis values, serialized from server-side Razor data
                 data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
            ((List<GameSense.Web.Models.ZoneStatViewModel>)ViewBag.ZoneStats).Select(z => z.DeathCount)
                 )),
-                backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                backgroundColor: [
+                    'rgba(13, 110, 253, 0.7)',
+                    'rgba(220, 53, 69, 0.7)',
+                    'rgba(255, 193, 7, 0.7)',
+                    'rgba(25, 135, 84, 0.7)',
+                    'rgba(108, 117, 125, 0.7)'
+                ]
             }]
         },
         options: {
             scales: {
                 y: {
-                    ticks: {
-                        stepSize: 1,    // force integer steps — deaths are always whole numbers
-                        precision: 0
-                    },
+                    ticks: { stepSize: 1, precision: 0 },
                     beginAtZero: true
                 }
             }
