@@ -18,7 +18,7 @@ public class SessionManager : MonoBehaviour
 
     void Awake()
     {
-        // singleton setup — only one SessionManager can exist
+        // singleton setup 
         if (Instance == null)
             Instance = this;
         else

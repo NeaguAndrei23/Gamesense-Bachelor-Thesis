@@ -54,22 +54,27 @@ namespace GameSense.API.Services
             return predictionEngine.Predict(levelData); //different Predict() method
         }
 
+        private static readonly HashSet<string> SeederLevelIds = new()
+        {
+            "Level_1", "Level_2", "Level_3", "Level_4", "Level_5"
+        };
+
         public List<LevelData> GenerateTrainingData(GameSenseDbContext context)
         {
-            var levelIds = context.Sessions.Select(s => s.LevelId)
-                .Distinct()
-                .ToList();
+            // only train on seeder levels — known difficulty data
+            var levelIds = SeederLevelIds.ToList();
             var result = new List<LevelData>();
 
             foreach (var levelId in levelIds)
             {
                 var sessions = context.Sessions.Where(s => s.LevelId == levelId).ToList();
+                if (!sessions.Any()) continue;
+
                 var avgDeaths = (float)sessions.Average(s => s.Deaths);
                 var avgDuration = (float)sessions.Average(s => s.DurationSeconds);
-                var completionRate = (float)sessions.Count(s => s.IsCompleted)/sessions.Count() * 100;
+                var completionRate = (float)sessions.Count(s => s.IsCompleted) / sessions.Count() * 100;
                 var avgAttempts = (float)sessions.Average(s => s.Attempts);
 
-                // assign label using predefined thresholds
                 string label;
                 if (completionRate < 20 || avgDeaths > 10)
                     label = "Unfair";
@@ -80,7 +85,7 @@ namespace GameSense.API.Services
                 else
                     label = "Easy";
 
-                var levelData = new LevelData
+                result.Add(new LevelData
                 {
                     LevelId = levelId,
                     AverageDeaths = avgDeaths,
@@ -88,22 +93,40 @@ namespace GameSense.API.Services
                     CompletionRate = completionRate,
                     AverageAttempts = avgAttempts,
                     Label = label
-                };
-                result.Add(levelData);
+                });
             }
             return result;
         }
+
+        public LevelData? GetLevelData(GameSenseDbContext context, string levelId)
+        {
+            var sessions = context.Sessions.Where(s => s.LevelId == levelId).ToList();
+            if (!sessions.Any()) return null;
+
+            var avgDeaths = (float)sessions.Average(s => s.Deaths);
+            var avgDuration = (float)sessions.Average(s => s.DurationSeconds);
+            var completionRate = (float)sessions.Count(s => s.IsCompleted) / sessions.Count() * 100;
+            var avgAttempts = (float)sessions.Average(s => s.Attempts);
+
+            return new LevelData
+            {
+                LevelId = levelId,
+                AverageDeaths = avgDeaths,
+                AverageDuration = avgDuration,
+                CompletionRate = completionRate,
+                AverageAttempts = avgAttempts
+            };
+        }
         // returns cached model if available, otherwise trains and caches a new one
-        // training only happens once per API lifetime, subsequent calls should return quickly
+        // training only happens once per API lifetime or per level, subsequent calls should return quickly
         public ITransformer GetOrTrainModel(GameSenseDbContext context)
         {
-            if(_cachedModel == null)
+            if (_cachedModel == null)
             {
                 var trainingData = GenerateTrainingData(context);
                 _cachedModel = TrainModel(trainingData);
             }
             return _cachedModel;
         }
-
     }
 }

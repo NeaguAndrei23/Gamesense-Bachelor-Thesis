@@ -24,18 +24,12 @@ namespace GameSense.API.Controllers
         [HttpGet("{levelId}")]
         public IActionResult Get(string levelId)
         {
-            var trainingData = _difficultyService.GenerateTrainingData(_context);
-            if(trainingData.Count < 4)
-            {
-                return BadRequest("Not enough data to train the model. Please add more sessions.");
-            }
             var model = _difficultyService.GetOrTrainModel(_context);
-            var levelData = trainingData.FirstOrDefault(l => l.LevelId == levelId);
 
+            var levelData = _difficultyService.GetLevelData(_context, levelId);
             if (levelData == null)
-            {
                 return NotFound("No session data for this level.");
-            }
+
             var prediction = _difficultyService.Predict(levelData, model);
             return Ok(prediction);
         }
