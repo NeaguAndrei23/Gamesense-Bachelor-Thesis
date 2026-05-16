@@ -56,7 +56,7 @@ namespace GameSense.API.Controllers
 
             _context.Sessions.Add(session);
             _context.SaveChanges();
-            return CreatedAtAction(nameof(GetAll), new { id = session.Id }, session);
+            return CreatedAtAction("GetAll", new { id = session.Id }, session);
         }
 
         // DELETE api/sessions/{id} — remove a session, used by designer to clean corrupted or invalid data
