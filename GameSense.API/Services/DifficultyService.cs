@@ -54,47 +54,71 @@ namespace GameSense.API.Services
             return predictionEngine.Predict(levelData); //different Predict() method
         }
 
-        private static readonly HashSet<string> SeederLevelIds = new()
+        // assigns a difficulty label using predefined thresholds as fallback
+        // used when designer has not configured expected difficulty for a level
+        private string AssignThresholdLabel(float completionRate, float avgDeaths)
         {
-            "Level_1", "Level_2", "Level_3", "Level_4", "Level_5"
-        };
-
+            if (completionRate < 20 || avgDeaths > 10) return "Unfair";
+            if (completionRate < 40 || avgDeaths > 5) return "Hard";
+            if (completionRate < 70 || avgDeaths > 2) return "Medium";
+            return "Easy";
+        }
+        private LevelData AggregateSessions(string levelId, List<GameSense.API.Models.Session> sessions, 
+            string label)
+        {
+            return new LevelData
+            {
+                LevelId = levelId,
+                AverageDeaths = (float)sessions.Average(s => s.Deaths),
+                AverageDuration = (float)sessions.Average(s => s.DurationSeconds),
+                CompletionRate = (float)sessions.Count(s => s.IsCompleted) / sessions.Count() * 100,
+                AverageAttempts = (float)sessions.Average(s => s.Attempts),
+                Label = label
+            };
+        }
         public List<LevelData> GenerateTrainingData(GameSenseDbContext context)
         {
-            // only train on seeder levels — known difficulty data
-            var levelIds = SeederLevelIds.ToList();
             var result = new List<LevelData>();
 
-            foreach (var levelId in levelIds)
+            // get all configs with expected difficulty set — primary training source
+            var configs = context.LevelConfigs
+                .Where(c => c.ExpectedDifficulty != null)
+                .ToList();
+
+            var configuredLevelIds = configs.Select(c => c.LevelId).ToList();
+
+            // Phase 1 — designer configured levels (preferred)
+            foreach (var config in configs)
             {
-                var sessions = context.Sessions.Where(s => s.LevelId == levelId).ToList();
+                var sessions = context.Sessions
+                    .Where(s => s.LevelId == config.LevelId)
+                    .ToList();
+
+                if (!sessions.Any()) continue;
+
+                result.Add(AggregateSessions(config.LevelId, sessions, config.ExpectedDifficulty!));
+            }
+
+            // Phase 2 — unconfigured levels, use threshold labels as fallback
+            var unconfiguredLevelIds = context.Sessions
+                .Select(s => s.LevelId)
+                .Distinct()
+                .Where(id => !configuredLevelIds.Contains(id))
+                .ToList();
+
+            foreach (var levelId in unconfiguredLevelIds)
+            {
+                var sessions = context.Sessions
+                    .Where(s => s.LevelId == levelId)
+                    .ToList();
+
                 if (!sessions.Any()) continue;
 
                 var avgDeaths = (float)sessions.Average(s => s.Deaths);
-                var avgDuration = (float)sessions.Average(s => s.DurationSeconds);
                 var completionRate = (float)sessions.Count(s => s.IsCompleted) / sessions.Count() * 100;
-                var avgAttempts = (float)sessions.Average(s => s.Attempts);
-
-                string label;
-                if (completionRate < 20 || avgDeaths > 10)
-                    label = "Unfair";
-                else if (completionRate < 40 || avgDeaths > 5)
-                    label = "Hard";
-                else if (completionRate < 70 || avgDeaths > 2)
-                    label = "Medium";
-                else
-                    label = "Easy";
-
-                result.Add(new LevelData
-                {
-                    LevelId = levelId,
-                    AverageDeaths = avgDeaths,
-                    AverageDuration = avgDuration,
-                    CompletionRate = completionRate,
-                    AverageAttempts = avgAttempts,
-                    Label = label
-                });
+                result.Add(AggregateSessions(levelId, sessions, AssignThresholdLabel(completionRate, avgDeaths)));
             }
+
             return result;
         }
 
@@ -103,19 +127,7 @@ namespace GameSense.API.Services
             var sessions = context.Sessions.Where(s => s.LevelId == levelId).ToList();
             if (!sessions.Any()) return null;
 
-            var avgDeaths = (float)sessions.Average(s => s.Deaths);
-            var avgDuration = (float)sessions.Average(s => s.DurationSeconds);
-            var completionRate = (float)sessions.Count(s => s.IsCompleted) / sessions.Count() * 100;
-            var avgAttempts = (float)sessions.Average(s => s.Attempts);
-
-            return new LevelData
-            {
-                LevelId = levelId,
-                AverageDeaths = avgDeaths,
-                AverageDuration = avgDuration,
-                CompletionRate = completionRate,
-                AverageAttempts = avgAttempts
-            };
+            return AggregateSessions(levelId, sessions, ""); // empty label — predicting, not training
         }
         // returns cached model if available, otherwise trains and caches a new one
         // training only happens once per API lifetime or per level, subsequent calls should return quickly
