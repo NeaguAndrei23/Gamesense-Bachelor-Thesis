@@ -37,6 +37,50 @@ namespace GameSense.API.Migrations
                     b.ToTable("DeathEvents");
                 });
 
+            modelBuilder.Entity("GameSense.API.Models.LevelConfig", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ExpectedDifficulty")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GameName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LevelId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LevelConfigs");
+                });
+
+            modelBuilder.Entity("GameSense.API.Models.LevelZone", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LevelConfigId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ZoneDescription")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ZoneName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LevelConfigId");
+
+                    b.ToTable("LevelZones");
+                });
+
             modelBuilder.Entity("GameSense.API.Models.Session", b =>
                 {
                     b.Property<int>("Id")
@@ -80,6 +124,22 @@ namespace GameSense.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("GameSense.API.Models.LevelZone", b =>
+                {
+                    b.HasOne("GameSense.API.Models.LevelConfig", "LevelConfig")
+                        .WithMany("Zones")
+                        .HasForeignKey("LevelConfigId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LevelConfig");
+                });
+
+            modelBuilder.Entity("GameSense.API.Models.LevelConfig", b =>
+                {
+                    b.Navigation("Zones");
                 });
 
             modelBuilder.Entity("GameSense.API.Models.Session", b =>

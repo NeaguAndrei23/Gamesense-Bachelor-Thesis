@@ -9,7 +9,10 @@ namespace GameSense.API.Data
     {
         public DbSet<Session> Sessions { get; set; }
         public DbSet<DeathEvent> DeathEvents { get; set; }
-        public GameSenseDbContext(DbContextOptions<GameSenseDbContext> options) : base(options) { 
-        }
+        public GameSenseDbContext(DbContextOptions<GameSenseDbContext> options) : base(options) { }
+        public DbSet<LevelConfig> LevelConfigs { get; set; } 
+        public DbSet<LevelZone> LevelZones { get; set; }
+
+
     }
 }
