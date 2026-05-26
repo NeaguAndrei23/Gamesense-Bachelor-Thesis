@@ -4,6 +4,7 @@ namespace GameSense.API.Models
 {
     // stores designer-defined configuration for a level
     // created before playtesting begins, defines intent and zone layout
+
     public class LevelConfig
     {
         public int Id { get; set; }

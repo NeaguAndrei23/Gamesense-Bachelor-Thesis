@@ -11,6 +11,7 @@
 
 
         // reverse navigation property
-        public LevelConfig LevelConfig { get; set; } = null!;
+        [System.Text.Json.Serialization.JsonIgnore]
+        public LevelConfig? LevelConfig { get; set; } = null!;
     }
 }
