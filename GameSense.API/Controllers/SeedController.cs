@@ -62,11 +62,23 @@ namespace GameSense.API.Controllers
                 new() { PlayerId = "Player_4", LevelId = "Level_5", StartTime = DateTime.Now.AddDays(-4), DurationSeconds = 95.0, Deaths = 3, Attempts = 2, IsCompleted = true },
                 new() { PlayerId = "Player_1", LevelId = "Level_5", StartTime = DateTime.Now.AddDays(-3), DurationSeconds = 120.0, Deaths = 4, Attempts = 3, IsCompleted = true },
                 new() { PlayerId = "Player_3", LevelId = "Level_5", StartTime = DateTime.Now.AddDays(-2), DurationSeconds = 110.0, Deaths = 3, Attempts = 2, IsCompleted = true },
-};
+            };
 
             _context.Sessions.AddRange(sessions);
             _context.SaveChanges();
 
+
+            // seed level configs with expected difficulties
+            var levelConfigs = new List<GameSense.API.Models.LevelConfig>
+            {
+                new() { LevelId = "Level_1", GameName = "GameSense Prototype", ExpectedDifficulty = "Easy" },
+                new() { LevelId = "Level_2", GameName = "GameSense Prototype", ExpectedDifficulty = "Medium" },
+                new() { LevelId = "Level_3", GameName = "GameSense Prototype", ExpectedDifficulty = "Hard" },
+                new() { LevelId = "Level_4", GameName = "GameSense Prototype", ExpectedDifficulty = "Unfair" },
+                new() { LevelId = "Level_5", GameName = "GameSense Prototype", ExpectedDifficulty = "Medium" },
+            };
+            _context.LevelConfigs.AddRange(levelConfigs);
+            _context.SaveChanges();
             // fetch the saved sessions to get their assigned IDs
             var savedSessions = _context.Sessions.ToList();
 
