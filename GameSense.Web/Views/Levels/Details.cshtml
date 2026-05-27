@@ -30,7 +30,38 @@
         <h1 class="h2 fw-bold mb-0">@ViewBag.LevelId</h1>
         <span class="badge bg-@badgeColor fs-6">@difficultyLabel</span>
     </div>
+@{
+    var levelConfig = ViewBag.LevelConfig as GameSense.Web.Models.LevelConfigViewModel;
+    var intended = levelConfig?.ExpectedDifficulty;
+}
 
+    @* Difficulty mismatch warning *@
+
+    @if (intended != null && difficultyLabel != "Unavailable")
+    {
+        if (intended == difficultyLabel)
+        {
+                <div class="alert alert-success mt-2">
+                    Player behavior matches your intended difficulty of
+                    <strong>@intended</strong>
+                </div>
+        }
+        else
+        {
+                <div class="alert alert-warning mt-2">
+                    Mismatch detected —
+                    Intended: <strong>@intended</strong> |
+                    Predicted by players: <strong>@difficultyLabel</strong>
+                </div>
+        }
+    }
+    else if (intended == null)
+    {
+        <div class="alert alert-secondary mt-2">
+            No intended difficulty configured for this level.
+            <a href="#">Configure now</a>
+        </div>
+    }
     @* stat cards *@
     <div class="row g-3 mb-4">
         <div class="col-6 col-lg-3">

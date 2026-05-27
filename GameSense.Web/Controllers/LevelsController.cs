@@ -27,6 +27,12 @@ namespace GameSense.Web.Controllers
                 ? await zoneResponse.Content.ReadFromJsonAsync<List<ZoneStatViewModel>>()
                 : new List<ZoneStatViewModel>();
 
+            // fetch level config — not critical, null if designer hasn't configured this level yet
+            var configResponse = await client.GetAsync($"api/levelconfig/{levelId}");
+            ViewBag.LevelConfig = configResponse.IsSuccessStatusCode
+                ? await configResponse.Content.ReadFromJsonAsync<LevelConfigViewModel>()
+                : null;
+
             ViewBag.ZoneStats = zoneStats;
             ViewBag.LevelId = levelId;
             // fetch difficulty prediction — not critical, show "Unavailable" if it fails
