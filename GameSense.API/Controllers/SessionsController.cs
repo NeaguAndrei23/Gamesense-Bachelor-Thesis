@@ -73,5 +73,30 @@ namespace GameSense.API.Controllers
             return NoContent();
         }
 
+        // GET api/sessions/levels — returns aggregated stats per unique level
+        [HttpGet("levels")]
+        public IActionResult GetLevelSummaries()
+        {
+            var levelIds = _context.Sessions
+                .Select(s => s.LevelId)
+                .Distinct()
+                .ToList();
+
+            var summaries = levelIds.Select(levelId =>
+            {
+                var sessions = _context.Sessions.Where(s => s.LevelId == levelId).ToList();
+                return new
+                {
+                    levelId,
+                    sessionCount = sessions.Count,
+                    averageDeaths = Math.Round(sessions.Average(s => s.Deaths), 1),
+                    averageDuration = Math.Round(sessions.Average(s => s.DurationSeconds), 1),
+                    completionRate = sessions.Count == 0 ? 0 : sessions.Count(s => s.IsCompleted) * 100 / sessions.Count
+                };
+            }).ToList();
+
+            return Ok(summaries);
+        }
+
     }
 }

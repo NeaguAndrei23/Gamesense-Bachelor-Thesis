@@ -1,0 +1,74 @@
+﻿@model GameSense.Web.Models.LevelConfigViewModel?
+@{
+    ViewData["Title"] = "Configure Level";
+    var levelId = ViewBag.LevelId as string;
+    var config = ViewBag.Config as GameSense.Web.Models.LevelConfigViewModel;
+}
+
+@* navbar *@
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+    <div class="container-fluid px-4">
+        <span class="navbar-brand fw-bold text-primary fs-4">GameSense</span>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="/Sessions">Back to Sessions</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid px-4 py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6">
+
+            @* page header *@
+            <div class="mb-4">
+                <h1 class="h2 fw-bold mb-0">Configure @levelId</h1>
+                <p class="text-muted">Set the intended difficulty for this level</p>
+            </div>
+
+            @* config form *@
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="post" asp-action="Configure" asp-route-levelId="@levelId">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Level ID</label>
+                            <input type="text" class="form-control" value="@levelId" disabled />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Game Name</label>
+                            <input type="text" name="gameName" class="form-control"
+                                   placeholder="e.g. My Platformer Game"
+                                   value="@(config?.GameName ?? "")" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Expected Difficulty</label>
+                            <select name="expectedDifficulty" class="form-select">
+                                <option value="">-- Select difficulty --</option>
+                                <option value="Easy" selected="@(config?.ExpectedDifficulty == "Easy")">Easy</option>
+                                <option value="Medium" selected="@(config?.ExpectedDifficulty == "Medium")">Medium</option>
+                                <option value="Hard" selected="@(config?.ExpectedDifficulty == "Hard")">Hard</option>
+                                <option value="Unfair" selected="@(config?.ExpectedDifficulty == "Unfair")">Unfair</option>
+                            </select>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Save Configuration</button>
+                            <a href="/Levels/Details/@levelId" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @* show existing config if any *@
+            @if (config != null)
+            {
+                    <div class="alert alert-info mt-3">
+                        Current configuration: <strong>@config.ExpectedDifficulty</strong>
+                    @if (config.GameName != null)
+                    {
+                                <span>— @config.GameName</span>
+                    }
+                    </div>
+            }
+
+        </div>
+    </div>
+</div>

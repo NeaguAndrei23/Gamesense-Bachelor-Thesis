@@ -76,7 +76,7 @@
             <div class="card shadow-sm h-100">
                 <div class="card-body">
                     <p class="text-muted small text-uppercase fw-semibold mb-1">Average Deaths</p>
-                    <p class="fs-3 fw-bold mb-0">@(Model.Average(s => s.Deaths).ToString("F1"))</p>
+                    <p class="fs-3 fw-bold mb-0">@(Model.Any() ? Model.Average(s => s.Deaths).ToString("F1") : "0")</p>
                 </div>
             </div>
         </div>
@@ -84,7 +84,7 @@
             <div class="card shadow-sm h-100">
                 <div class="card-body">
                     <p class="text-muted small text-uppercase fw-semibold mb-1">Average Duration</p>
-                    <p class="fs-3 fw-bold mb-0">@(Model.Average(s => s.DurationSeconds).ToString("F1"))s</p>
+                    <p class="fs-3 fw-bold mb-0">@(Model.Any() ? Model.Average(s => s.DurationSeconds).ToString("F1") : "0")s</p>
                 </div>
             </div>
         </div>

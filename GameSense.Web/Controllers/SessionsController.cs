@@ -12,16 +12,14 @@ namespace GameSense.Web.Controllers
         {
             _client = client;
         }
-
         public async Task<IActionResult> Index()
         {
             var client = _client.CreateClient("GameSenseAPI");
-            var response = await client.GetAsync("api/sessions");
+            var response = await client.GetAsync("api/sessions/levels");
             if (!response.IsSuccessStatusCode)
-                return View(new List<SessionViewModel>());
-
-            var sessions = await response.Content.ReadFromJsonAsync<List<SessionViewModel>>(); //deserealized list of JSON objects
-            return View(sessions);
+                return View(new List<LevelSummaryViewModel>());
+            var levels = await response.Content.ReadFromJsonAsync<List<LevelSummaryViewModel>>();
+            return View(levels);
         }
     }
 }
