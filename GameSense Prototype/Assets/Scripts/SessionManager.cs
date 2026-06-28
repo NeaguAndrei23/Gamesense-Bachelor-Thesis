@@ -8,9 +8,10 @@ public class SessionManager : MonoBehaviour
 {
     public static SessionManager Instance; // singleton pattern
 
+    [Header("Level Id Configuration")]
+    [SerializeField] private string levelId = "Level_Unity";
     private string apiBaseUrl = "https://localhost:7146";
     private string playerId = "UnityPlayer_1";
-    private string levelId = "Level_Unity";
 
     private DateTime sessionStart;
     private int deathCount = 0;
@@ -27,8 +28,13 @@ public class SessionManager : MonoBehaviour
 
     void Start()
     {
+        if (string.IsNullOrWhiteSpace(levelId))
+        {
+            Debug.LogWarning("SessionManager: levelId is empty! Make sure to set it in the SessionManager object");
+        }
         // record when the session started
         sessionStart = DateTime.UtcNow;
+        
     }
 
     // called by HazardZone when player dies
@@ -62,7 +68,7 @@ public class SessionManager : MonoBehaviour
             ""startTime"": ""{sessionStart:yyyy-MM-ddTHH:mm:ss}"",
             ""durationSeconds"": {duration:F1},
             ""deaths"": {deathCount},
-            ""attempts"": 1,
+            ""attempts"": {deathCount + 1},
             ""isCompleted"": {isCompleted.ToString().ToLower()}
         }}";
 

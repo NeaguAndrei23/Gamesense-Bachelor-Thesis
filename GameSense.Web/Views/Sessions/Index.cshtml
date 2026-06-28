@@ -59,7 +59,7 @@
                                     </div>
                                 </td>
                                 <td class="px-4 py-3">
-                                @if (!new[] { "Level_1", "Level_2", "Level_3", "Level_4", "Level_5" }.Contains(level.LevelId))
+                                @if (!level.LevelId.StartsWith("TrainingLevel_"))
                                 {
                                     <a asp-controller="LevelConfig" asp-action="Configure" 
                                     asp-route-levelId="@level.LevelId"

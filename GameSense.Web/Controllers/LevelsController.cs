@@ -14,6 +14,12 @@ namespace GameSense.Web.Controllers
         {
             var client = _client.CreateClient("GameSenseAPI");
 
+            //safe defaults up front
+            ViewBag.ZoneStats = new List<ZoneStatViewModel>();
+            ViewBag.LevelConfig = null;
+            ViewBag.LevelId = levelId;
+            ViewBag.DifficultyResponse = null;
+
             // fetch all sessions for this level — critical, return early with empty list if it fails
             var sessionResponse = await client.GetAsync($"api/sessions/level/{levelId}");
             if (!sessionResponse.IsSuccessStatusCode)

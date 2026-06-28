@@ -81,8 +81,9 @@ namespace GameSense.API.Services
             var result = new List<LevelData>();
 
             // get all configs with expected difficulty set — primary training source
+            var excludedFromTraining = new[] { "Level_Unity", "Level_Unity_Easy", "Level_Unity_Unfair" };
             var configs = context.LevelConfigs
-                .Where(c => c.ExpectedDifficulty != null)
+                .Where(c => c.ExpectedDifficulty != null && !excludedFromTraining.Contains(c.LevelId))
                 .ToList();
 
             var configuredLevelIds = configs.Select(c => c.LevelId).ToList();
