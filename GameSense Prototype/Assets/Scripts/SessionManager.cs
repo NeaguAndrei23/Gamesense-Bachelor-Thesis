@@ -37,6 +37,14 @@ public class SessionManager : MonoBehaviour
         
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            QuitLevel();
+        }
+    }
+
     // called by HazardZone when player dies
     public void RegisterDeath(string zoneName)
     {
@@ -45,17 +53,25 @@ public class SessionManager : MonoBehaviour
         Debug.Log($"Death registered in zone: {zoneName}. Total deaths: {deathCount}");
     }
 
+    
+    private bool sessionEnded = false;
     // called when player completes the level
     public void CompleteLevel()
     {
+        if (sessionEnded) return;
+        sessionEnded = true;
         StartCoroutine(SendSessionData(true));
     }
 
     // called when player quits the level
     public void QuitLevel()
     {
+        if (sessionEnded) return;
+        sessionEnded = true;
         StartCoroutine(SendSessionData(false));
     }
+
+
 
     private IEnumerator SendSessionData(bool isCompleted)
     {

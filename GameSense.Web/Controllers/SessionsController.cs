@@ -19,7 +19,15 @@ namespace GameSense.Web.Controllers
             if (!response.IsSuccessStatusCode)
                 return View(new List<LevelSummaryViewModel>());
             var levels = await response.Content.ReadFromJsonAsync<List<LevelSummaryViewModel>>();
-            return View(levels);
+
+            var sorted = levels
+                .OrderBy(l => l.LevelId.StartsWith("TrainingLevel_") ? 1 : 0)
+                .ThenBy(l => l.LevelId.StartsWith("TrainingLevel_")
+                    ? int.Parse(l.LevelId.Substring("TrainingLevel_".Length))
+                    : 0)
+                .ThenBy(l => l.LevelId)
+                .ToList();
+            return View(sorted);
         }
     }
 }
