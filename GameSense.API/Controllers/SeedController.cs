@@ -37,7 +37,7 @@ namespace GameSense.API.Controllers
                 double avgDeathsTarget = 0.5 + difficultyPoint * 17.0;
                 double completionTarget = 98.0 - difficultyPoint * 90.0;
                 double durationTarget = 50.0 + difficultyPoint * 160.0;
-                double attemptsTarget = 1.0 + difficultyPoint * 7.0;
+                
 
                 string label =
                     completionTarget < 20 || avgDeathsTarget > 10 ? "Unfair" :
@@ -56,7 +56,7 @@ namespace GameSense.API.Controllers
                 {
                     int deaths = Math.Max(0, (int)Math.Round(avgDeathsTarget + (rng.NextDouble() - 0.5) * avgDeathsTarget * 0.6));
                     double duration = Math.Max(5, durationTarget + (rng.NextDouble() - 0.5) * durationTarget * 0.4);
-                    int attempts = Math.Max(1, (int)Math.Round(attemptsTarget + (rng.NextDouble() - 0.5) * attemptsTarget * 0.6));
+                    int attempts = deaths + 1;
                     bool isCompleted = rng.NextDouble() * 100 < completionTarget;
                     newSessions.Add(new GameSense.API.Models.Session
                     {

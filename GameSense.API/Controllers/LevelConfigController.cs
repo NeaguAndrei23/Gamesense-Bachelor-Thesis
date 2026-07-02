@@ -50,6 +50,7 @@ namespace GameSense.API.Controllers
         [HttpPut("{levelId}")]
         public IActionResult Update(string levelId, [FromBody] UpdateLevelConfigRequest updated)
         {
+            
             var config = _context.LevelConfigs.FirstOrDefault(l => l.LevelId == levelId);
             if (config == null)
                 return NotFound($"No configuration found for level: {levelId}");
