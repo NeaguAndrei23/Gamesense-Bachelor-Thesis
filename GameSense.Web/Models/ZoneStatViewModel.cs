@@ -4,5 +4,6 @@
     {
         public string Zone { get; set; } = string.Empty;
         public int DeathCount { get; set; }
+        public string? Description { get; set; }
     }
 }

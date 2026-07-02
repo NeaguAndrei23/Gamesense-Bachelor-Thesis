@@ -380,6 +380,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_A
+  zoneDescription: First Platform Jumps
 --- !u!61 &84575971
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -505,6 +506,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_E
+  zoneDescription: Third platform hazards
 --- !u!61 &195984746
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -630,6 +632,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_C
+  zoneDescription: Third platform jumps
 --- !u!61 &264249279
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -755,6 +758,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_C
+  zoneDescription: Third platform jumps
 --- !u!61 &302426381
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -880,6 +884,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_D
+  zoneDescription: Second platform hazards
 --- !u!61 &304322846
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1422,6 +1427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_A
+  zoneDescription: First Platform Jumps
 --- !u!61 &540321059
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1547,6 +1553,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_C
+  zoneDescription: Third platform jumps
 --- !u!61 &652415183
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1672,6 +1679,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_B
+  zoneDescription: Second platform jumps
 --- !u!61 &715833992
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1797,6 +1805,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_E
+  zoneDescription: Third platform hazards
 --- !u!61 &723938805
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1922,6 +1931,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_A
+  zoneDescription: First Platform Jumps
 --- !u!61 &735229999
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2158,6 +2168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_A
+  zoneDescription: First Platform Jumps
 --- !u!61 &854148543
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2283,6 +2294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_A
+  zoneDescription: First Platform Jumps
 --- !u!61 &1067422502
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2408,6 +2420,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_A
+  zoneDescription: First Platform Jumps
 --- !u!61 &1076368230
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2533,6 +2546,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_B
+  zoneDescription: Second platform jumps
 --- !u!61 &1121813869
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2655,6 +2669,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193bc88020c9b534e8eabf9f2b40c1a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelId: Level_Unity
 --- !u!4 &1180241046
 Transform:
   m_ObjectHideFlags: 0
@@ -2702,6 +2717,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_C
+  zoneDescription: Third platform jumps
 --- !u!61 &1253799863
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2827,6 +2843,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_B
+  zoneDescription: Second platform jumps
 --- !u!61 &1307531132
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2952,6 +2969,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_B
+  zoneDescription: Second platform jumps
 --- !u!61 &1405765242
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3326,6 +3344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_A
+  zoneDescription: First Platform Jumps
 --- !u!61 &1723774249
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3451,6 +3470,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_A
+  zoneDescription: First Platform Jumps
 --- !u!61 &1732974950
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3687,6 +3707,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_B
+  zoneDescription: Second platform jumps
 --- !u!61 &1829852785
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3812,6 +3833,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_C
+  zoneDescription: Third platform jumps
 --- !u!61 &1844660486
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4048,6 +4070,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_D
+  zoneDescription: Second platform hazards
 --- !u!61 &1992646401
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4173,6 +4196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneName: Zone_E
+  zoneDescription: Third platform hazards
 --- !u!61 &2134468418
 BoxCollider2D:
   m_ObjectHideFlags: 0

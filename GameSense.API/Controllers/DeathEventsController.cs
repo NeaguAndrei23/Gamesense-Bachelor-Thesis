@@ -37,13 +37,45 @@ namespace GameSense.API.Controllers
             if (!sessionIds.Any())
                 return NotFound();
 
-            var zoneStats = _context.DeathEvents
-                .Where(d => sessionIds.Contains(d.SessionId))               // only deaths from level's sessions
-                .GroupBy(d => d.ZoneId)                                     // group deaths together by zone name
-                .Select(g => new { zone = g.Key, deathCount = g.Count() })  // for each group, take the zone name and count deaths
-                .ToList();
+            var deathCounts = _context.DeathEvents
+                    .Where(d => sessionIds.Contains(d.SessionId))
+                    .GroupBy(d => d.ZoneId)
+                    .Select(g => new { zone = g.Key, deathCount = g.Count() })
+                    .ToList();
 
-            return Ok(zoneStats);
+            // check if declared zones exist for this level in LevelZones
+            var config = _context.LevelConfigs.FirstOrDefault(c => c.LevelId == levelId);
+            if (config != null)
+            {
+                var declaredZones = _context.LevelZones
+                    .Where(z => z.LevelConfigId == config.Id)
+                    .Select(z => z.ZoneName)
+                    .ToList();
+
+                if (declaredZones.Any())
+                {
+                    var declaredZoneData = _context.LevelZones
+                        .Where(z => z.LevelConfigId == config.Id)
+                        .Select(z => new { z.ZoneName, z.ZoneDescription })
+                        .ToList();
+                    // left join: start from declared zones, fill in death counts where they exist, default to 0
+                    var zoneStats = declaredZoneData
+                        .Select(z => new
+                        {
+                            zone = z.ZoneName,
+                            deathCount = deathCounts
+                                .FirstOrDefault(d => d.zone == z.ZoneName)?.deathCount ?? 0,
+                            description = z.ZoneDescription
+                        })
+                        .OrderByDescending(z => z.deathCount)
+                        .ToList();
+
+                    return Ok(zoneStats);
+                }
+            }
+
+            // fallback: no declared zones, return death-only aggregation as before
+            return Ok(deathCounts.OrderByDescending(z => z.deathCount));
         }
         // POST api/deathevents — record a single death event during a session, called by Unity when player dies in a zone
         [HttpPost]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
+using System.Linq;
 
 public class SessionManager : MonoBehaviour
 {
@@ -34,9 +35,35 @@ public class SessionManager : MonoBehaviour
         }
         // record when the session started
         sessionStart = DateTime.UtcNow;
+        StartCoroutine(RegisterZones());
         
     }
 
+    // registers all HazardZone names in the scene with the API
+    // so LevelZones is populated with the complete declared zone list for this level
+    // the AddZone endpoint is idempotent — re-running the scene never creates duplicates
+    private IEnumerator RegisterZones()
+    {
+        var hazardZones = FindObjectsOfType<HazardZone>();
+        //Debug.Log($"RegisterZones: found {hazardZones.Length} hazard zones");
+
+        // deduplicate — only register each unique zone name once
+        var uniqueZoneNames = hazardZones
+            .Select(hz => new { hz.zoneName, hz.zoneDescription })
+            .GroupBy(hz => hz.zoneName)
+            .Select(g => g.First())
+            .ToList();
+        foreach (var hz in uniqueZoneNames)
+        {
+            //Debug.Log($"Registering zone: {hz.zoneName}");
+            string zoneJson = $@"{{""zoneName"": ""{hz.zoneName}"", ""zoneDescription"": ""{hz.zoneDescription}""}}";
+            yield return StartCoroutine(PostJson(
+                apiBaseUrl + $"/api/levelconfig/{levelId}/zones",
+                zoneJson,
+                null
+            ));
+        }
+    }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
@@ -126,6 +153,7 @@ public class SessionManager : MonoBehaviour
             Debug.LogError($"POST failed: {request.error}");
         }
         request.Dispose(); //avoid memory leak
+
     }
 }
 

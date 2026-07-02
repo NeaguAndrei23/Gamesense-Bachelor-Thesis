@@ -6,6 +6,8 @@ public class HazardZone : MonoBehaviour
 {
     // when player enters the hazard trigger, notify the SessionManager of a death
     public string zoneName;
+    [Tooltip("Optional: Describe details about the zone, like name or other notes")]
+    public string zoneDescription;
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))

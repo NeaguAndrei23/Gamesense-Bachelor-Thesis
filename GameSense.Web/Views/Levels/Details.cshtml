@@ -126,10 +126,18 @@
                         <tbody>
                             @foreach (var zone in (List<GameSense.Web.Models.ZoneStatViewModel>)ViewBag.ZoneStats)
                             {
-                                    <tr>
-                                        <td>@zone.Zone</td>
-                                        <td class="text-end fw-bold">@zone.DeathCount</td>
-                                    </tr>
+                                <tr>
+                                    <td>
+                                        @zone.Zone
+                                        <span class="text-muted ms-1" style="cursor: help;"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-placement="right"
+                                            title="@(string.IsNullOrEmpty(zone.Description) ? "No description provided" : zone.Description)">
+                                            &#9432;
+                                        </span>
+                                    </td>
+                                    <td class="text-end fw-bold">@zone.DeathCount</td>
+                                </tr>
                             }
                         </tbody>
                     </table>
@@ -179,5 +187,14 @@
                 }
             }
         }
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltips.map(function (el) {
+            return new bootstrap.Tooltip(el);
+        });
     });
 </script>

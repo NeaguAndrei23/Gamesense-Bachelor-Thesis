@@ -73,7 +73,12 @@ namespace GameSense.API.Controllers
             var existing = _context.LevelZones
                 .FirstOrDefault(z => z.LevelConfigId == config.Id && z.ZoneName == zone.ZoneName);
             if (existing != null)
+            {
+                // update description in case the designer changed it in Unity
+                existing.ZoneDescription = zone.ZoneDescription;
+                _context.SaveChanges();
                 return Ok(existing);
+            }
 
             zone.LevelConfigId = config.Id;
             _context.LevelZones.Add(zone);
