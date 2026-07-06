@@ -10,7 +10,7 @@ namespace GameSense.API.Controllers
     public class SessionsController : ControllerBase
     {
         private readonly GameSenseDbContext _context; //dependency injections (final)
-        public SessionsController(GameSenseDbContext gameSenseDbContext) //registered in Program.cs, searched in the service container
+        public SessionsController(GameSenseDbContext gameSenseDbContext) 
         {
             _context = gameSenseDbContext;
         }
@@ -56,7 +56,7 @@ namespace GameSense.API.Controllers
 
             _context.Sessions.Add(session);
             _context.SaveChanges();
-            return CreatedAtAction("GetAll", new { id = session.Id }, session);
+            return CreatedAtAction("Get", new { id = session.Id }, session);
         }
 
         // DELETE api/sessions/{id} — remove a session, used by designer to clean corrupted or invalid data
@@ -82,18 +82,17 @@ namespace GameSense.API.Controllers
                 .Distinct()
                 .ToList();
 
-            var summaries = levelIds.Select(levelId =>
-            {
-                var sessions = _context.Sessions.Where(s => s.LevelId == levelId).ToList();
-                return new
+            var summaries = _context.Sessions
+                .GroupBy(s => s.LevelId)
+                .Select(g => new
                 {
-                    levelId,
-                    sessionCount = sessions.Count,
-                    averageDeaths = Math.Round(sessions.Average(s => s.Deaths), 1),
-                    averageDuration = Math.Round(sessions.Average(s => s.DurationSeconds), 1),
-                    completionRate = sessions.Count == 0 ? 0 : sessions.Count(s => s.IsCompleted) * 100 / sessions.Count
-                };
-            }).ToList();
+                    levelId = g.Key,
+                    sessionCount = g.Count(),
+                    averageDeaths = Math.Round(g.Average(s => s.Deaths), 1),
+                    averageDuration = Math.Round(g.Average(s => s.DurationSeconds), 1),
+                    completionRate = g.Count(s => s.IsCompleted) * 100 / g.Count()
+                })
+                .ToList();
 
             return Ok(summaries);
         }

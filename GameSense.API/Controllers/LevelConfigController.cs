@@ -28,7 +28,7 @@ namespace GameSense.API.Controllers
             // create new config
             _context.LevelConfigs.Add(levelConfig);
             _context.SaveChanges();
-            return CreatedAtAction(nameof(Create), new { levelId = levelConfig.LevelId }, levelConfig);
+            return CreatedAtAction(nameof(Get), new { levelId = levelConfig.LevelId }, levelConfig);
         }
 
 

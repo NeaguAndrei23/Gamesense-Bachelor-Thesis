@@ -47,17 +47,14 @@ namespace GameSense.API.Controllers
             var config = _context.LevelConfigs.FirstOrDefault(c => c.LevelId == levelId);
             if (config != null)
             {
-                var declaredZones = _context.LevelZones
+                var declaredZoneData = _context.LevelZones
                     .Where(z => z.LevelConfigId == config.Id)
-                    .Select(z => z.ZoneName)
+                    .Select(z => new { z.ZoneName, z.ZoneDescription })
                     .ToList();
 
-                if (declaredZones.Any())
+                if (declaredZoneData.Any())
                 {
-                    var declaredZoneData = _context.LevelZones
-                        .Where(z => z.LevelConfigId == config.Id)
-                        .Select(z => new { z.ZoneName, z.ZoneDescription })
-                        .ToList();
+
                     // left join: start from declared zones, fill in death counts where they exist, default to 0
                     var zoneStats = declaredZoneData
                         .Select(z => new
