@@ -36,12 +36,12 @@ This project was developed as a bachelor's thesis at the **Bucharest University 
 Three tiers, communicating over HTTP:
 
 ```
-┌─────────────────┐      HTTP       ┌───────────────────┐      HTTP      ┌──────────────────┐
-│  Unity Prototype │ ───────────────▶│  GameSense.API     │◀───────────────│  GameSense.Web     │
-│  (C#, 2D)         │                │  ASP.NET Core       │                │  ASP.NET Core MVC   │
-│                   │                │  EF Core + SQLite   │                │  Designer dashboard │
-│                   │                │  ML.NET pipeline     │                │                    │
-└─────────────────┘                 └───────────────────┘                └──────────────────┘
+┌─────────────────┐      HTTP      ┌────────────────────┐      HTTP      ┌────────────────────┐
+│ Unity Prototype │ ─────────────▶| GameSense.API       │◀──────────────│  GameSense.Web     │
+│  (C#, 2D)       │                │  ASP.NET Core      │                │ ASP.NET Core MVC   │
+│                 │                │  EF Core + SQLite  │                │ Designer dashboard │
+│                 │                │  ML.NET pipeline   │                │                    │
+└─────────────────┘                └────────────────────┘                └────────────────────┘
 ```
 
 Three independent data flows feed the system, converging on a single level's detail view:
